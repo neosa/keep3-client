@@ -2,8 +2,6 @@ export interface Keep3ClientOptions {
 	bucketId: string;
 	accessKey: string;
 	secretKey: string;
-	baseURL?: string;
-	filesBaseURL?: string;
 	fetch?: typeof fetch;
 }
 

@@ -11,15 +11,13 @@ import {
 	type BulkResult,
 } from "./types.js";
 
-const DEFAULT_BASE_URL = "https://api.keep3.ru";
-const DEFAULT_FILES_BASE = "https://files.keep3.ru";
+const API_URL = "https://api.keep3.ru";
+const FILES_URL = "https://files.keep3.ru";
 
 export class Keep3Client {
 	private readonly bucketId: string;
 	private readonly accessKey: string;
 	private readonly secretKey: string;
-	private readonly baseURL: string;
-	private readonly filesBaseURL: string;
 	private readonly fetchFn: typeof fetch;
 
 	constructor(options: Keep3ClientOptions) {
@@ -30,8 +28,6 @@ export class Keep3Client {
 		this.bucketId = options.bucketId;
 		this.accessKey = options.accessKey;
 		this.secretKey = options.secretKey;
-		this.baseURL = (options.baseURL ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
-		this.filesBaseURL = (options.filesBaseURL ?? DEFAULT_FILES_BASE).replace(/\/+$/, "");
 		this.fetchFn = options.fetch ?? globalThis.fetch.bind(globalThis);
 	}
 
@@ -47,7 +43,7 @@ export class Keep3Client {
 		path: string,
 		init?: {body?: BodyInit; headers?: Record<string, string>; query?: Record<string, string | number | boolean | undefined>},
 	): Promise<T> {
-		const url = new URL(`${this.baseURL}${path}`);
+		const url = new URL(`${API_URL}${path}`);
 		if (init?.query) {
 			for (const [k, v] of Object.entries(init.query)) {
 				if (v === undefined) continue;
@@ -175,7 +171,7 @@ export class Keep3Client {
 
 	publicUrl(originalName: string): string {
 		const encoded = originalName.split("/").map(encodeURIComponent).join("/");
-		return `${this.filesBaseURL}/${this.bucketId}/${encoded}`;
+		return `${FILES_URL}/${this.bucketId}/${encoded}`;
 	}
 }
 

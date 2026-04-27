@@ -43,9 +43,7 @@ new Keep3Client({
   bucketId: string;       // UUID бакета
   accessKey: string;      // ключ доступа из админки
   secretKey: string;      // секретный ключ
-  baseURL?: string;       // по умолчанию https://api.keep3.ru
-  filesBaseURL?: string;  // по умолчанию https://files.keep3.ru
-  fetch?: typeof fetch;   // кастомный fetch (для тестов / прокси)
+  fetch?: typeof fetch;   // кастомный fetch (для тестов / SSR)
 })
 ```
 
