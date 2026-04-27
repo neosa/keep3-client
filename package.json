@@ -9,10 +9,13 @@
     "cdn",
     "sdk"
   ],
-  "homepage": "https://github.com/keep3/client",
+  "homepage": "https://github.com/neosa/keep3-client#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/keep3/client.git"
+    "url": "git+https://github.com/neosa/keep3-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neosa/keep3-client/issues"
   },
   "license": "MIT",
   "type": "module",
