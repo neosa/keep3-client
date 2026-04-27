@@ -1,0 +1,46 @@
+{
+  "name": "@keep3/client",
+  "version": "0.1.0",
+  "description": "Official client SDK for keep3.ru file storage",
+  "keywords": ["keep3", "storage", "files", "cdn", "sdk"],
+  "homepage": "https://github.com/keep3/client",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keep3/client.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
+    "release": "npm run release:patch",
+    "release:patch": "npm run typecheck && npm version patch -m \"release: v%s\" && git push --follow-tags",
+    "release:minor": "npm run typecheck && npm version minor -m \"release: v%s\" && git push --follow-tags",
+    "release:major": "npm run typecheck && npm version major -m \"release: v%s\" && git push --follow-tags"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3"
+  }
+}
