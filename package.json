@@ -1,8 +1,14 @@
 {
   "name": "@keep3/client",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Official client SDK for keep3.ru file storage",
-  "keywords": ["keep3", "storage", "files", "cdn", "sdk"],
+  "keywords": [
+    "keep3",
+    "storage",
+    "files",
+    "cdn",
+    "sdk"
+  ],
   "homepage": "https://github.com/keep3/client",
   "repository": {
     "type": "git",
