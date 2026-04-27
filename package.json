@@ -1,7 +1,7 @@
 {
   "name": "@keep3/client",
   "version": "0.1.3",
-  "description": "Official client SDK for keep3.ru file storage",
+  "description": "Клиент для файлового хранилища",
   "keywords": [
     "keep3",
     "storage",

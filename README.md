@@ -1,8 +1,8 @@
 # @keep3/client
 
-Official TypeScript/JavaScript client for [keep3.ru](https://keep3.ru) file storage.
+TypeScript/JavaScript-клиент для файлового хранилища.
 
-Works in Node.js 18+, browsers, Deno, Bun, and edge runtimes (Cloudflare Workers, Vercel Edge). Zero dependencies.
+Работает в Node.js 18+, браузерах, Deno, Bun и edge-средах (Cloudflare Workers, Vercel Edge). Без зависимостей.
 
 ## Установка
 
@@ -14,7 +14,7 @@ yarn add @keep3/client
 pnpm add @keep3/client
 ```
 
-## Быстрый старт
+## Быстрый старт — один бакет
 
 ```typescript
 import {Keep3Client} from "@keep3/client";
@@ -25,14 +25,41 @@ const client = new Keep3Client({
   secretKey: "secret...",
 });
 
-// Загрузка
-const file = await client.upload(blob, {
-  path: "images/avatars",
-  filename: "photo.jpg",
+const file = await client.upload(blob, {path: "images/avatars"});
+console.log(file.url);
+```
+
+## Быстрый старт — несколько бакетов
+
+Если у проекта несколько бакетов — используй `createKeep3Site` с произвольными именами:
+
+```typescript
+import {createKeep3Site} from "@keep3/client";
+
+const site = createKeep3Site({
+  avatars: {
+    bucketId: "<bucket-uuid>",
+    accessKey: "AKIA...",
+    secretKey: "secret...",
+  },
+  documents: {
+    bucketId: "<bucket-uuid>",
+    accessKey: "AKIA...",
+    secretKey: "secret...",
+  },
+  thumbnails: {
+    bucketId: "<bucket-uuid>",
+    accessKey: "AKIA...",
+    secretKey: "secret...",
+  },
 });
 
-console.log(file.url); // https://files.keep3.ru/<bucketId>/<generated-name>.webp
+const avatar = await site.avatars.upload(file, {path: "users"});
+const doc = await site.documents.upload(file);
+const {url} = await site.documents.sign(doc.id, {ttl: 3600});
 ```
+
+Имена ключей — любые: `public`/`private`, `avatars`/`docs`, `cdn`/`uploads`. Каждый — это полноценный `Keep3Client`, у него доступны все методы из API ниже. Типы выводятся автоматически: `site.avatars` будет известен компилятору.
 
 ## API
 
@@ -107,7 +134,7 @@ await client.restore(123);
 
 ```typescript
 const {url, expires} = await client.sign(123, {ttl: 3600});
-// url: https://files.keep3.ru/<bucketId>/<key>?expires=...&sig=...
+// url: <files-host>/<bucketId>/<key>?expires=...&sig=...
 ```
 
 #### `bulkDelete(ids, options?)` / `bulkRestore(ids)` — массовые операции
@@ -127,7 +154,7 @@ const versions = await client.versions(123);
 
 ```typescript
 const url = client.publicUrl("images/avatars/photo.webp");
-// https://files.keep3.ru/<bucketId>/images/avatars/photo.webp
+// <files-host>/<bucketId>/images/avatars/photo.webp
 ```
 
 ## Обработка ошибок
