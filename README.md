@@ -29,14 +29,14 @@ const file = await client.upload(blob, {path: "images/avatars"});
 console.log(file.url);
 ```
 
-## Быстрый старт — несколько бакетов
+## Быстрый старт — проект с несколькими бакетами
 
-Если у проекта несколько бакетов — используй `createKeep3Site` с произвольными именами:
+Если у проекта несколько бакетов — используй `createKeep3Project` с произвольными именами:
 
 ```typescript
-import {createKeep3Site} from "@keep3/client";
+import {createKeep3Project} from "@keep3/client";
 
-const site = createKeep3Site({
+const project = createKeep3Project({
   avatars: {
     bucketId: "<bucket-uuid>",
     accessKey: "AKIA...",
@@ -54,12 +54,12 @@ const site = createKeep3Site({
   },
 });
 
-const avatar = await site.avatars.upload(file, {path: "users"});
-const doc = await site.documents.upload(file);
-const {url} = await site.documents.sign(doc.id, {ttl: 3600});
+const avatar = await project.avatars.upload(file, {path: "users"});
+const doc = await project.documents.upload(file);
+const {url} = await project.documents.sign(doc.id, {ttl: 3600});
 ```
 
-Имена ключей — любые: `public`/`private`, `avatars`/`docs`, `cdn`/`uploads`. Каждый — это полноценный `Keep3Client`, у него доступны все методы из API ниже. Типы выводятся автоматически: `site.avatars` будет известен компилятору.
+Имена ключей — любые: `public`/`private`, `avatars`/`docs`, `cdn`/`uploads`. Каждый — это полноценный `Keep3Client`, у него доступны все методы из API ниже. Типы выводятся автоматически: `project.avatars` будет известен компилятору.
 
 ## API
 
