@@ -37,10 +37,11 @@
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
     "prepublishOnly": "npm run build",
-    "release": "npm run release:patch",
-    "release:patch": "npm run typecheck && npm version patch -m \"release: v%s\" && git push --follow-tags && npm publish --access public",
-    "release:minor": "npm run typecheck && npm version minor -m \"release: v%s\" && git push --follow-tags && npm publish --access public",
-    "release:major": "npm run typecheck && npm version major -m \"release: v%s\" && git push --follow-tags && npm publish --access public"
+    "push": "npm run push:patch",
+    "push:patch": "npm run typecheck && git add -A && (git diff-index --quiet HEAD -- || git commit -m \"chore: pre-release changes\") && npm version patch -m \"release: v%s\" && git push --follow-tags",
+    "push:minor": "npm run typecheck && git add -A && (git diff-index --quiet HEAD -- || git commit -m \"chore: pre-release changes\") && npm version minor -m \"release: v%s\" && git push --follow-tags",
+    "push:major": "npm run typecheck && git add -A && (git diff-index --quiet HEAD -- || git commit -m \"chore: pre-release changes\") && npm version major -m \"release: v%s\" && git push --follow-tags",
+    "deploy": "npm publish --access public --registry=https://registry.npmjs.org"
   },
   "engines": {
     "node": ">=18"
