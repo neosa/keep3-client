@@ -103,6 +103,9 @@ export class Keep3Client {
 		fd.append("file", blob, filename);
 		if (options.path) fd.append("path", options.path);
 		fd.append("convert", options.convert === true ? "true" : "false");
+		if (options.maxWidth !== undefined) fd.append("maxWidth", String(options.maxWidth));
+		if (options.maxHeight !== undefined) fd.append("maxHeight", String(options.maxHeight));
+		if (options.quality !== undefined) fd.append("quality", String(options.quality));
 
 		return this.request<FileRow>("POST", `/buckets/${this.bucketId}/files/`, {body: fd});
 	}
@@ -110,7 +113,7 @@ export class Keep3Client {
 	async uploadRaw(
 		filename: string,
 		data: ArrayBuffer | Uint8Array | Blob,
-		options: {convert?: boolean; mimeType?: string} = {},
+		options: {convert?: boolean; mimeType?: string; maxWidth?: number; maxHeight?: number; quality?: number} = {},
 	): Promise<FileRow> {
 		return this.request<FileRow>("PUT", `/buckets/${this.bucketId}/files/`, {
 			body: data instanceof Blob ? data : new Blob([data as BlobPart]),
@@ -118,6 +121,9 @@ export class Keep3Client {
 			query: {
 				filename,
 				convert: options.convert === true ? "true" : "false",
+				maxWidth: options.maxWidth,
+				maxHeight: options.maxHeight,
+				quality: options.quality,
 			},
 		});
 	}

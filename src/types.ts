@@ -12,6 +12,8 @@ export interface FileRow {
 	displayName: string | null;
 	size: number;
 	mimeType: string;
+	width: number | null;
+	height: number | null;
 	sha256: string;
 	url: string;
 	metadata: unknown;
@@ -43,6 +45,12 @@ export interface UploadOptions {
 	path?: string;
 	filename?: string;
 	convert?: boolean;
+	/** Макс. ширина в px (только при convert: true). Изображение уменьшается до этого размера, маленькие не растягиваются. */
+	maxWidth?: number;
+	/** Макс. высота в px (только при convert: true). */
+	maxHeight?: number;
+	/** Качество WebP, 1-100. По умолчанию из настроек сервера. */
+	quality?: number;
 }
 
 export interface SignOptions {
