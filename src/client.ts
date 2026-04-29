@@ -102,7 +102,7 @@ export class Keep3Client {
 		const blob = file instanceof Blob ? file : new Blob([file as BlobPart]);
 		fd.append("file", blob, filename);
 		if (options.path) fd.append("path", options.path);
-		fd.append("convert", options.convert === false ? "false" : "true");
+		fd.append("convert", options.convert === true ? "true" : "false");
 
 		return this.request<FileRow>("POST", `/buckets/${this.bucketId}/files/`, {body: fd});
 	}
@@ -117,7 +117,7 @@ export class Keep3Client {
 			headers: options.mimeType ? {"Content-Type": options.mimeType} : {},
 			query: {
 				filename,
-				convert: options.convert === false ? "false" : "true",
+				convert: options.convert === true ? "true" : "false",
 			},
 		});
 	}

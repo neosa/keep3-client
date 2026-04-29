@@ -82,18 +82,19 @@ new Keep3Client({
 const file = await client.upload(blob, {
   path: "images/avatars",   // опционально, папка
   filename: "photo.jpg",    // опционально, если file — это File, имя берётся из него
-  convert: true,            // конвертировать изображения в WebP (по умолчанию true)
+  convert: true,            // опционально, конвертировать изображение в WebP. По умолчанию false (файл сохраняется как есть)
 });
 ```
 
 Принимает `Blob`, `File`, `ArrayBuffer`, `Uint8Array`.
+
+По умолчанию файл сохраняется как есть. Передай `convert: true` чтобы конвертировать изображения в WebP при загрузке. Альтернативно — храни оригинал, а WebP/ресайз получай через query-параметры на уровне CDN: `<files-host>/<bucketId>/<key>?format=webp&w=400`.
 
 #### `uploadRaw(filename, data, options?)` — прямая PUT-загрузка
 
 ```typescript
 await client.uploadRaw("path/to/photo.jpg", buffer, {
   mimeType: "image/jpeg",
-  convert: true,
 });
 ```
 
