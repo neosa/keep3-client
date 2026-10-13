@@ -98,6 +98,20 @@ await client.uploadRaw("path/to/photo.jpg", buffer, {
 });
 ```
 
+По умолчанию имя генерируется (`path/to/<timestamp>-<sha8>.jpg`): каждая загрузка — новый файл с новой ссылкой, публично кэшируется навсегда.
+
+Чтобы сохранить файл **ровно по указанному пути** и перезаписывать его при повторной загрузке, передай `exact: true`:
+
+```typescript
+await client.uploadRaw("voice-lead/latest.json", new TextEncoder().encode(JSON.stringify(manifest)), {
+  mimeType: "application/json",
+  exact: true,
+});
+// → <files-host>/<bucketId>/voice-lead/latest.json, Cache-Control: no-cache
+```
+
+Прошлая версия сохраняется в истории (`versions(fileId)`). Имя не должно выглядеть как сгенерированное (`<8 символов base36>-<8 hex>.ext`) — иначе 400.
+
 #### `list(query?)` — список файлов
 
 ```typescript

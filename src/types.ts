@@ -53,6 +53,20 @@ export interface UploadOptions {
 	quality?: number;
 }
 
+export interface UploadRawOptions {
+	convert?: boolean;
+	mimeType?: string;
+	/**
+	 * true — сохранить ровно по `filename` (без сгенерированного имени).
+	 * Повторная загрузка перезаписывает файл (прошлая версия уходит в историю),
+	 * публично отдаётся с `Cache-Control: no-cache`. Подходит для `latest.json` и т.п.
+	 */
+	exact?: boolean;
+	maxWidth?: number;
+	maxHeight?: number;
+	quality?: number;
+}
+
 export interface SignOptions {
 	ttl?: number;
 }

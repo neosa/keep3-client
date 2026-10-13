@@ -7,6 +7,7 @@ export {
 	type FileVersionRow,
 	type ListFilesQuery,
 	type UploadOptions,
+	type UploadRawOptions,
 	type SignOptions,
 	type SignedUrl,
 	type DeleteOptions,

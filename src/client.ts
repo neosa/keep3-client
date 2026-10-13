@@ -5,6 +5,7 @@ import {
 	type FileVersionRow,
 	type ListFilesQuery,
 	type UploadOptions,
+	type UploadRawOptions,
 	type SignOptions,
 	type SignedUrl,
 	type DeleteOptions,
@@ -113,7 +114,7 @@ export class Keep3Client {
 	async uploadRaw(
 		filename: string,
 		data: ArrayBuffer | Uint8Array | Blob,
-		options: {convert?: boolean; mimeType?: string; maxWidth?: number; maxHeight?: number; quality?: number} = {},
+		options: UploadRawOptions = {},
 	): Promise<FileRow> {
 		return this.request<FileRow>("PUT", `/buckets/${this.bucketId}/files/`, {
 			body: data instanceof Blob ? data : new Blob([data as BlobPart]),
@@ -121,6 +122,7 @@ export class Keep3Client {
 			query: {
 				filename,
 				convert: options.convert === true ? "true" : "false",
+				exact: options.exact === true ? "true" : undefined,
 				maxWidth: options.maxWidth,
 				maxHeight: options.maxHeight,
 				quality: options.quality,
