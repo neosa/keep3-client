@@ -36,6 +36,13 @@ export interface ListFilesQuery {
 	limit?: number;
 	cursor?: string | number;
 	search?: string;
+	/** Папка, например "voice-lead". По умолчанию — весь бакет. */
+	path?: string;
+	/**
+	 * true (по умолчанию) — файлы из всех вложенных подпапок `path`.
+	 * false — только файлы строго на уровне `path` (без подпапок).
+	 */
+	recursive?: boolean;
 	mime?: string;
 	includeDeleted?: boolean;
 	order?: "newest" | "oldest" | "size";

@@ -78,6 +78,8 @@ export class Keep3Client {
 				limit: query.limit,
 				cursor: query.cursor,
 				search: query.search,
+				pathPrefix: query.path,
+				recursive: query.recursive === false ? "false" : "true",
 				mime: query.mime,
 				includeDeleted: query.includeDeleted ? "true" : undefined,
 				order: query.order,

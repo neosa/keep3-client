@@ -117,6 +117,8 @@ await client.uploadRaw("voice-lead/latest.json", new TextEncoder().encode(JSON.s
 ```typescript
 const files = await client.list({
   search: "avatar",
+  path: "avatars",     // папка; по умолчанию — весь бакет
+  recursive: true,     // по умолчанию true — включая подпапки; false — только этот уровень
   mime: "image/",      // или конкретный mime
   limit: 50,
   cursor: 1234,
