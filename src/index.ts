@@ -12,5 +12,9 @@ export {
 	type SignedUrl,
 	type DeleteOptions,
 	type BulkResult,
+	type FolderRow,
+	type ListFoldersQuery,
+	type MoveOptions,
+	type UploadLargeOptions,
 	type ApiError,
 } from "./types.js";

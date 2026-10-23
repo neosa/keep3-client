@@ -71,6 +71,9 @@ new Keep3Client({
   accessKey: string;      // ключ доступа из админки
   secretKey: string;      // секретный ключ
   fetch?: typeof fetch;   // кастомный fetch (для тестов / SSR)
+  retries?: number;       // повторы, по умолчанию 3 (см. «Повторы и таймауты»)
+  timeoutMs?: number;     // таймаут запроса, по умолчанию 60 000; 0 — без таймаута
+  uploadTimeoutMs?: number; // таймаут загрузки, по умолчанию 600 000
 })
 ```
 
@@ -127,12 +130,58 @@ const files = await client.list({
 });
 ```
 
+Максимум 500 за запрос, следующая страница — `cursor: <id последнего файла>`.
+
+#### `listAll(query?)` — все файлы без ручной пагинации
+
+```typescript
+for await (const file of client.listAll({path: "voice-lead"})) {
+  console.log(file.originalName);
+}
+```
+
+Те же фильтры, что у `list`, кроме `cursor`/`limit`; `order: "size"` не поддерживается.
+
+#### `folders(query?)` — папки со счётчиками файлов
+
+```typescript
+await client.folders();                                       // всё дерево бакета
+await client.folders({recursive: false});                     // только папки в корне
+await client.folders({path: "voice-lead", recursive: false}); // подпапки voice-lead
+// → [{path: "voice-lead/releases", fileCount: 12}, ...]  (fileCount включает вложенные)
+```
+
+Вместе с `list({path, recursive: false})` даёт обычный просмотр «как в проводнике»: один запрос на папки уровня, один — на файлы уровня.
+
 #### `get(fileId)` / `getByPath(path)` — получить метаданные
 
 ```typescript
 const file = await client.get(123);
 const file = await client.getByPath("images/avatars/photo.webp");
 ```
+
+#### `uploadLarge(path, data, options?)` — большие файлы по частям
+
+```typescript
+const file = await client.uploadLarge("releases/app-1.2.0.dmg", blob, {
+  mimeType: "application/x-apple-diskimage",
+  chunkSize: 8 * 1024 * 1024,   // по умолчанию 8 МБ
+  overwrite: true,              // false — 409, если путь занят
+  onProgress: (sent, total) => console.log(`${Math.round(sent / total * 100)}%`),
+});
+```
+
+Файл сохраняется ровно по `path`. Память сервера не растёт, а при обрыве связи загрузка продолжается с того байта, который сервер уже принял. Используй для всего, что больше нескольких десятков МБ.
+
+#### `move(source, to, options?)` / `moveFolder(from, to)` — перемещение и переименование
+
+```typescript
+await client.move(123, "archive/report.pdf");               // по id
+await client.move("inbox/a.pdf", "archive/a.pdf", {overwrite: true}); // по пути
+await client.moveFolder("old/photos", "archive/photos");     // папка целиком → {affected}
+```
+
+Содержимое не копируется — меняется только путь (и URL). История версий и метаданные сохраняются. Занятый путь → `Keep3Error` 409 (`moveFolder` в этом случае не двигает ничего и отдаёт `body.conflicts`).
 
 #### `delete(fileId, options?)` — удалить (по умолчанию soft-delete)
 
@@ -187,6 +236,15 @@ try {
   }
 }
 ```
+
+### Повторы и таймауты
+
+- **429** (превышен лимит запросов) — SDK ждёт `Retry-After` и повторяет любой запрос: сервер его не выполнял.
+- **Сетевая ошибка, таймаут, 502/503/504** — повтор только для безопасных запросов: чтение, удаление, `uploadRaw(..., {exact: true})`, чанки `uploadLarge`. Обычная загрузка и `move` не повторяются, чтобы не создать дубликат.
+- Пауза между попытками растёт: 0.5 → 1 → 2 → 4 с (до 10 с), с разбросом.
+- Таймаут — `Keep3Error` со `status: 0`.
+
+Лимиты по умолчанию на один ключ: 1200 чтений и 600 записей в минуту. Для массового переноса держи 4–8 параллельных запросов — этого достаточно, чтобы упереться в сеть, а не в лимит.
 
 ## Разработка
 
