@@ -151,6 +151,14 @@ await client.folders({path: "voice-lead", recursive: false}); // подпапк�
 // → [{path: "voice-lead/releases", fileCount: 12}, ...]  (fileCount включает вложенные)
 ```
 
+#### `createFolder(path)` — пустая папка
+
+```typescript
+await client.createFolder("voice-lead/releases"); // → {path, created: true}
+```
+
+Сервер кладёт скрытую метку `voice-lead/releases/.keep` (0 байт): в `list()` её нет, в `fileCount` она не считается, а папка видна в `folders()`. Повторный вызов безопасен (`created: false`). Свои заглушки не нужны. Пустые файлы (0 байт) можно загружать и обычным `uploadRaw`.
+
 Вместе с `list({path, recursive: false})` даёт обычный просмотр «как в проводнике»: один запрос на папки уровня, один — на файлы уровня.
 
 #### `get(fileId)` / `getByPath(path)` — получить метаданные

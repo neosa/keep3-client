@@ -261,6 +261,18 @@ export class Keep3Client {
 		});
 	}
 
+	/**
+	 * Создать пустую папку. Сервер кладёт скрытую метку `<path>/.keep` (0 байт) — она не видна
+	 * в `list()` и не учитывается в `fileCount`. Повторный вызов безопасен (`created: false`).
+	 */
+	async createFolder(path: string): Promise<{path: string; created: boolean}> {
+		return this.request<{path: string; created: boolean}>("POST", `/buckets/${this.bucketId}/files/folders`, {
+			body: JSON.stringify({path}),
+			headers: {"Content-Type": "application/json"},
+			idempotent: true,
+		});
+	}
+
 	/** Переместить / переименовать файл без копирования. source — id или текущий путь. */
 	async move(source: number | string, to: string, options: MoveOptions = {}): Promise<FileRow> {
 		return this.request<FileRow>("POST", `/buckets/${this.bucketId}/files/move`, {
