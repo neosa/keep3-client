@@ -1,0 +1,46 @@
+name: Publish
+
+# Публикация на npm через Trusted Publishing (OIDC) — без токенов и входа в npm.
+# Срабатывает на тег v* (его пушит `npm run push:patch`). Запуск вручную
+# (Actions → Publish → Run workflow, выбрать тег) — чтобы опубликовать уже запушенный тег.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+          registry-url: https://registry.npmjs.org
+      # Trusted Publishing требует npm >= 11.5.1
+      - run: npm install -g npm@latest
+      - run: yarn install --frozen-lockfile
+      - run: yarn typecheck
+
+      - name: Проверить тег и версию
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "${GITHUB_REF_TYPE}" = "tag" ] && [ "${GITHUB_REF_NAME}" != "v${VERSION}" ]; then
+            echo "Тег ${GITHUB_REF_NAME} не совпадает с версией package.json (${VERSION})" >&2
+            exit 1
+          fi
+          if npm view "@keep3/client@${VERSION}" version >/dev/null 2>&1; then
+            echo "@keep3/client@${VERSION} уже опубликован — пропускаю"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # prepublishOnly сам запускает сборку
+      - if: steps.version.outputs.skip != 'true'
+        run: npm publish --access public
